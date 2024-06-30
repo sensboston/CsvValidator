@@ -1,0 +1,25 @@
+﻿<Window x:Class="CsvValidator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CSV Validator" 
+        WindowStartupLocation="CenterScreen"
+        Height="350" 
+        Width="640">
+    <Grid>
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open and validate CSV file..." Click="OpenCsv_Click"/>
+                <Separator />
+                <MenuItem Header="Load rules..." Click="LoadValidationRules_Click"/>
+                <MenuItem Header="Save rules as..." Click="SaveRulesAs_Click"/>
+                <Separator />
+                <MenuItem Header="Exit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Edit current rules" Click="EditCurrentRules_Click"/>
+            </MenuItem>
+        </Menu>
+        <TextBox Name="ResultTextBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,40,10,10" 
+                 TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>
