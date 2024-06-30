@@ -23,6 +23,8 @@ namespace CsvValidator
             UpdateWindowTitle();
         }
 
+        #region Menu action processing
+
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -52,6 +54,9 @@ namespace CsvValidator
         {
             // Implement the logic to edit current rules here
         }
+        #endregion
+
+        #region CSV processing
 
         private void ValidateCsv(string filePath)
         {
@@ -149,6 +154,8 @@ namespace CsvValidator
             ResultTextBox.Foreground = Brushes.Red;
             ResultTextBox.Text = message;
         }
+
+        #endregion
 
         #region Rules operations
 
