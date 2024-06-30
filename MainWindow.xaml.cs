@@ -179,7 +179,6 @@ namespace CsvValidator
         #endregion
 
         #region Rules operations
-
         private Dictionary<string, (string Pattern, bool IsUnique, bool AllowEmpty)> LoadRulesFromXmlString(string xmlString)
         {
             var doc = XDocument.Parse(xmlString);
