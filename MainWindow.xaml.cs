@@ -19,8 +19,18 @@ namespace CsvValidator
         public MainWindow()
         {
             InitializeComponent();
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             LoadDefaultRules();
             UpdateWindowTitle();
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            if (ex != null)
+            {
+                MessageBox.Show($"Unhandled Exception:\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace.Take(5)}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         #region Menu action processing
@@ -71,8 +81,17 @@ namespace CsvValidator
                 }
             }
 
-            var lines = File.ReadAllLines(filePath);
-            if (lines.Length == 0)
+            var lines = new List<string>();
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var sr = new StreamReader(fs))
+            {
+                while (!sr.EndOfStream)
+                {
+                    lines.Add(sr.ReadLine());
+                }
+            }
+
+            if (lines.Count == 0)
             {
                 DisplayError("CSV file is empty.");
                 return;
@@ -93,7 +112,7 @@ namespace CsvValidator
                 }
             }
 
-            for (int i = 1; i < lines.Length; i++)
+            for (int i = 1; i < lines.Count; i++)
             {
                 var fields = SplitCsvLine(lines[i]);
 
@@ -128,7 +147,9 @@ namespace CsvValidator
 
             if (errors.Count == 0)
             {
-                DisplaySuccess($"{Path.GetFileName(filePath)} is VALID");
+                var message = $"{Path.GetFileName(filePath)} is VALID{Environment.NewLine}";
+                message += $"{lines.Count-1} correct records found.";
+                DisplaySuccess(message);
             }
             else
             {
@@ -175,7 +196,15 @@ namespace CsvValidator
 
         private void LoadDefaultRules()
         {
-            rules = LoadRulesFromXmlString(DefaultRules.Xml);
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, currentRulesFileName);
+            if (File.Exists(filePath))
+            {
+                LoadRulesFromXmlFile(filePath);
+            }
+            else
+            {
+                rules = LoadRulesFromXmlString(DefaultRules.Xml);
+            }
         }
 
         private void LoadValidationRules_Click(object sender, RoutedEventArgs e)
