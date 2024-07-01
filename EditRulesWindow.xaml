@@ -1,0 +1,74 @@
+﻿<Window x:Class="CsvValidator.EditRulesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:CsvValidator"
+        Title="Edit Rules" 
+        ResizeMode="NoResize"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen"
+        Width="440" Height="320" >
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.3*" />
+            <RowDefinition Height="3*" />
+        </Grid.RowDefinitions>
+
+        <!-- Top Area -->
+        <Grid Grid.Row="0" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.8*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox Name="RulesListBox" ScrollViewer.HorizontalScrollBarVisibility="Disabled" FontSize="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="RulesListBox_SelectionChanged"/>
+            <StackPanel Orientation="Vertical" Grid.Column="1" HorizontalAlignment="Right" Width="80" >
+                <Button Name="AddButton" Content="Add" Click="AddButton_Click" Margin="0 0 0 5"/>
+                <Button Name="DeleteButton" Content="Delete" Click="DeleteButton_Click" IsEnabled="False"/>
+                <Button Content="OK" Margin="0 12 0 0" Click="OkButton_Click"/>
+                <Button Content="Cancel" Margin="0 5" IsCancel="True"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Bottom Area -->
+        <Grid x:Name="EditorGrid" Grid.Row="1" Margin="10" IsEnabled="False">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Header:" Width="100" Grid.Row="0"/>
+            <TextBox Name="HeaderTextBox" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+            <CheckBox Name="IsUniqueCheckBox" Grid.Row="2" Margin="10 5" Content="Is Unique" />
+            <CheckBox Name="AllowEmptyCheckBox" Grid.Row="2" Margin="0 5" Grid.Column="1" Content="Allow Empty" />
+
+            <Label Content="RegEx" Width="100" Grid.Row="3"/>
+            <TextBox Name="RegExTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" TextChanged="RegExTextBox_TextChanged"/>
+
+            <Label Content="Test value:" Width="100" Grid.Row="4"/>
+            <TextBox Name="TestValueTextBox" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextChanged="TestValueTextBox_TextChanged"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Row="4" Grid.Column="2" Margin="3 0 0 0" VerticalAlignment="Center">
+                <Border BorderBrush="LightGray" BorderThickness="1" Width="125">
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <TextBlock Name="HighlightTextBlock" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                </Border>
+                <TextBlock x:Name="ResultText" Foreground="Red" HorizontalAlignment="Right" FontFamily="Segoe UI Symbol" Text=""/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0 10" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Name="ApplyButton" Content="Apply" Width="60" Click="ApplyButton_Click" Margin="5"/>
+                <Button Name="CancelButton" Content="Discard" Width="60" Click="DiscardButton_Click" Margin="0 5 0 5"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -14,6 +14,7 @@ namespace CsvValidator
     {
         private Dictionary<string, (string Pattern, bool IsUnique, bool AllowEmpty)> rules;
         private string currentRulesFileName = "default.xml";
+        private string currentRulesPath = string.Empty;
         private string currentCsvFileName = string.Empty;
 
         public MainWindow()
@@ -53,6 +54,7 @@ namespace CsvValidator
             };
             if (openFileDialog.ShowDialog() == true)
             {
+                ResultTextBox.Text = string.Empty;
                 var filePath = openFileDialog.FileName;
                 currentCsvFileName = Path.GetFileNameWithoutExtension(filePath);
                 UpdateWindowTitle();
@@ -62,7 +64,17 @@ namespace CsvValidator
 
         private void EditCurrentRules_Click(object sender, RoutedEventArgs e)
         {
-            // Implement the logic to edit current rules here
+            var editor = new EditRulesWindow(rules);
+            if (editor.ShowDialog() == true)
+            {
+                var newRules = editor.Rules;
+                var shouldSaveRules = !CompareRules(rules, newRules);
+                rules = newRules;
+                if (shouldSaveRules)
+                {
+                    SaveRulesToXmlFile(currentRulesPath);
+                }
+            }
         }
         #endregion
 
@@ -179,6 +191,31 @@ namespace CsvValidator
         #endregion
 
         #region Rules operations
+
+        /// <summary>
+        /// Returns 'True' if equal otherwise 'False'
+        /// </summary>
+        /// <param name="oldRules"></param>
+        /// <param name="newRules"></param>
+        /// <returns></returns>
+        private bool CompareRules(Dictionary<string, (string Pattern, bool IsUnique, bool AllowEmpty)> oldRules,
+                                  Dictionary<string, (string Pattern, bool IsUnique, bool AllowEmpty)> newRules)
+        {
+            if (oldRules.Count != newRules.Count) return false;
+
+            foreach (var kvp in oldRules)
+            {
+                if (!newRules.TryGetValue(kvp.Key, out var newRuleValue))
+                    return false;
+                if (kvp.Value.Pattern != newRuleValue.Pattern ||
+                    kvp.Value.IsUnique != newRuleValue.IsUnique ||
+                    kvp.Value.AllowEmpty != newRuleValue.AllowEmpty)
+                    return false;
+            }
+            return true;
+        }
+
+
         private Dictionary<string, (string Pattern, bool IsUnique, bool AllowEmpty)> LoadRulesFromXmlString(string xmlString)
         {
             var doc = XDocument.Parse(xmlString);
@@ -204,6 +241,7 @@ namespace CsvValidator
             {
                 rules = LoadRulesFromXmlString(DefaultRules.Xml);
             }
+            currentRulesPath = filePath;
         }
 
         private void LoadValidationRules_Click(object sender, RoutedEventArgs e)
@@ -231,6 +269,7 @@ namespace CsvValidator
             {
                 var filePath = saveFileDialog.FileName;
                 SaveRulesToXmlFile(filePath);
+                currentRulesPath = filePath;
             }
         }
 
@@ -249,6 +288,7 @@ namespace CsvValidator
                         )
                     );
                 currentRulesFileName = Path.GetFileName(filePath);
+                currentRulesPath = filePath;
                 UpdateWindowTitle();
             }
             catch (Exception ex)
@@ -276,6 +316,7 @@ namespace CsvValidator
                 );
                 doc.Save(filePath);
                 currentRulesFileName = Path.GetFileName(filePath);
+                currentRulesPath = filePath;
                 UpdateWindowTitle();
             }
             catch (Exception ex)
